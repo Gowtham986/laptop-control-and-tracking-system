@@ -1,21 +1,30 @@
 # Remote Laptop Control and Tracking System
 
-A Python-based project that allows users to remotely control and monitor a laptop using a smartphone. The system was designed to provide convenient remote access, device tracking, and management capabilities through a network connection.
+A Python-based remote laptop management system built with Flask that enables secure control and monitoring of a laptop from a smartphone or any web browser. The application provides live screen viewing, remote power management, screenshot capture, system monitoring, and secure remote access through ngrok.
 
 ## Features
 
-* Remote laptop control
-* Device monitoring and tracking
-* Real-time communication
-* User-friendly operation
-* Network-based access
+* Secure authentication system
+* Live screen streaming
+* Remote screenshot capture
+* System status monitoring (CPU, RAM, Battery, Uptime)
+* Remote shutdown and restart
+* Sleep, hibernate, and lock controls
+* User logout functionality
+* Public remote access using ngrok
+* Automatic email notification with access link
 
 ## Technologies Used
 
 * Python
-* Networking Concepts
-* Automation Techniques
+* Flask
+* OpenCV
+* MSS
+* PyAutoGUI
+* Psutil
+* Ngrok
+* SMTP Email Services
 
-## Learning Outcome
+## Project Outcome
 
-This project helped me gain practical experience in Python programming, networking, automation, debugging, and software development. AI-assisted tools were used during development to support learning, coding, and problem-solving.
+Developed a practical remote device management solution while gaining hands-on experience in web development, automation, networking, system administration, and Python programming. AI-assisted tools were used for development support, debugging, and learning purposes.
