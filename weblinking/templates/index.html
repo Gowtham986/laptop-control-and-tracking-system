@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Remote Control</title>
+    <style>
+        body { background:#0f172a; color:white; text-align:center; font-family:Arial; }
+        button { padding:10px; margin:8px; border:none; border-radius:6px; cursor:pointer; }
+        .btn { background:#3b82f6; color:white; }
+        .danger { background:#ef4444; }
+    </style>
+</head>
+<body>
+
+<h1>💻 Remote Control Panel</h1>
+
+<form action="/live">
+    <button class="btn">🎥 Live View</button>
+</form>
+
+<form action="/screenshot" method="post">
+    <button class="btn">📸 Screenshot</button>
+</form>
+
+<form action="/view_screenshot">
+    <button class="btn">🖼 View Screenshot</button>
+</form>
+
+<form action="/status">
+    <button class="btn">📊 Status</button>
+</form>
+
+<form action="/sleep" method="post">
+    <button class="btn">💤 Sleep</button>
+</form>
+
+<form action="/hibernate" method="post">
+    <button class="btn">🧊 Hibernate</button>
+</form>
+
+<form action="/lock" method="post">
+    <button class="btn">🔒 Lock</button>
+</form>
+
+<form action="/logout_user" method="post">
+    <button class="btn">🚪 Logout</button>
+</form>
+
+<form action="/restart" method="post">
+    <button class="danger">🔄 Restart</button>
+</form>
+
+<form action="/shutdown" method="post">
+    <button class="danger">⛔ Shutdown</button>
+</form>
+
+</body>
+</html>

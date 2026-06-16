@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Futuristic Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #1f1f2e, #0d0d15);
+      font-family: 'Inter', sans-serif;
+    }
+    .glass-card {
+      backdrop-filter: blur(15px);
+      background: rgba(30, 30, 50, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: 2rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .glass-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    }
+    .app-input {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    .app-input::placeholder { color: #ccc; }
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #333;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 12px;
+      display: none;
+      z-index: 1000;
+    }
+    .profile-popup {
+      display: none;
+      position: absolute;
+      top: 50px;
+      right: 10px;
+      background: rgba(30, 30, 50, 0.9);
+      border-radius: 12px;
+      padding: 10px;
+      width: 200px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      color: white;
+      z-index: 100;
+    }
+    .profile-popup button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="max-w-6xl mx-auto py-16 px-4">
+    <!-- Header with Profile -->
+    <div class="flex justify-between items-center mb-12">
+      <div>
+        <span class="inline-block px-4 py-1.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30">Dashboard Preview</span>
+        <h1 id="toggle-dashboard" class="text-4xl font-bold text-white mt-2 cursor-pointer">Your Control Center</h1>
+        <p class="text-slate-400 max-w-xl">Manage your laptop remotely with an intuitive, futuristic dashboard.</p>
+      </div>
+      <div class="relative">
+        <img src="{{ profile_pic }}" alt="Profile" id="profile-btn" class="w-12 h-12 rounded-full cursor-pointer border-2 border-purple-500">
+        <div id="profile-popup" class="profile-popup">
+          <p><strong>{{ username }}</strong></p>
+          <p>{{ email }}</p>
+          <button onclick="alert('Profile settings coming soon!')" class="bg-purple-600 hover:bg-purple-500">Settings</button>
+          <button onclick="alert('Logging out...'); window.location.href='/logout'" class="bg-red-600 hover:bg-red-500 mt-2">Logout</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search installed apps -->
+    <div class="mb-8 max-w-xl mx-auto" id="dashboard-section">
+      <input type="text" id="search-app" placeholder="Search installed app (e.g., Chrome, WhatsApp)" class="w-full app-input">
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="dashboard-cards">
+      <!-- Take Screenshot -->
+      <form action="/screenshot" method="POST" class="glass-card cursor-pointer">
+        <button type="submit" class="w-full text-left">
+          <span class="text-white font-medium text-lg">Take Screenshot</span>
+          <p class="text-slate-400 text-sm mt-1">Capture current screen</p>
+        </button>
+      </form>
+
+      <!-- Open Application -->
+      <form action="/open_app" method="POST" class="glass-card">
+        <input type="text" name="app_name" placeholder="Enter app name" class="app-input w-full mb-4" required>
+        <button type="submit" class="w-full bg-purple-600 text-white rounded-xl py-2 hover:bg-purple-500 transition">Open Application</button>
+      </form>
+
+      <!-- View Status -->
+      <form action="/status" method="POST" class="glass-card">
+        <button type="submit" class="w-full text-left">
+          <span class="text-white font-medium text-lg">View Status</span>
+          <p class="text-slate-400 text-sm mt-1">Check CPU, memory, and uptime</p>
+        </button>
+      </form>
+
+      <!-- Shutdown / Restart -->
+      <form action="/shutdown" method="POST" class="glass-card">
+        <select name="action" class="app-input w-full mb-4">
+          <option value="shutdown">Shutdown</option>
+          <option value="restart">Restart</option>
+        </select>
+        <button type="submit" class="w-full bg-red-600 text-white rounded-xl py-2 hover:bg-red-500 transition">Execute Power Action</button>
+      </form>
+
+      <!-- Send Dashboard Link by Email -->
+      <form action="/send_link" method="POST" class="glass-card">
+        <button type="submit" class="w-full text-left">
+          <span class="text-white font-medium text-lg">Send Dashboard Link</span>
+          <p class="text-slate-400 text-sm mt-1">Receive your dashboard link by email</p>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    // Toast messages
+    const showToast = (message) => {
+      const toast = document.getElementById('toast');
+      toast.innerText = message;
+      toast.style.display = 'block';
+      setTimeout(() => toast.style.display = 'none', 3000);
+    };
+
+    // Intercept form submissions
+    document.querySelectorAll('form').forEach(form => {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const action = form.getAttribute('action');
+        const formData = new FormData(form);
+        const response = await fetch(action, {
+          method: form.method,
+          body: formData
+        });
+        const text = await response.text();
+        showToast(text);
+      });
+    });
+
+    // Dashboard expand/collapse
+    const toggleBtn = document.getElementById('toggle-dashboard');
+    const dashboardSection = document.getElementById('dashboard-section');
+    const dashboardCards = document.getElementById('dashboard-cards');
+    let isOpen = true;
+    toggleBtn.addEventListener('click', () => {
+      isOpen = !isOpen;
+      dashboardSection.style.display = isOpen ? 'block' : 'none';
+      dashboardCards.style.display = isOpen ? 'grid' : 'none';
+    });
+
+    // Profile popup toggle
+    const profileBtn = document.getElementById('profile-btn');
+    const profilePopup = document.getElementById('profile-popup');
+    profileBtn.addEventListener('click', () => {
+      profilePopup.style.display = profilePopup.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // Hide profile popup when clicking outside
+    document.addEventListener('click', (e) => {
+      if(!profileBtn.contains(e.target) && !profilePopup.contains(e.target)){
+        profilePopup.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

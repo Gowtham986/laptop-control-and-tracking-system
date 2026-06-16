@@ -1,0 +1,19 @@
+body {
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.glass-card {
+    backdrop-filter: blur(20px);
+    background: rgba(30, 30, 30, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+button {
+    cursor: pointer;
+}
+
+button:hover {
+    transform: translateY(-3px);
+}
